@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Zheng Liu, PhD candidate of UIUC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zheng">
+    <meta name="author" content="Zheng">
+	   <meta name="keywords" content="Zheng Liu, UIUC, data science, job seeking, radiation detection, nuclear engineering">
+    <!-- Le styles -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="materials/additional.css" rel="stylesheet">
+    <style>
+      body {padding-top: 50px; /* 60px to make the container go all the way to the bottom of the topbar */}
+    </style>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="index.html">Zheng's Homepage</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="index.html">About me</a>
+        <a class="nav-item nav-link" href="#">Projects</a>
+        <a class="nav-item nav-link active" href="blog_index.html">Blog</a>
+        <a class="nav-item nav-link" href="materials/Zheng_Resume_current.pdf" target="_blank">Resume</a>
+      </div>
+    </div>
+  </nav>
+
+
+    <div class="container">
+
+
+    <section id="Experiences">
+			<div class="page-header">
+				<h1>Expectation Maximization for Medical Imaging Reconstruction</h1>
+        <p> by <a href="index.html">Zheng Liu</a></p>
+        <p class='lead'>An introduction of MLEM (maximum likelihood expectation maximization)
+          algorithm for medical imaging reconstruction (emission tomography such as PET and SPECT). The MLEM algorithm for emmision image
+          reconstruction was originally developed by
+          <a href="https://www.ncbi.nlm.nih.gov/pubmed/18238264">Shepp and Vardi in 1982</a>.
+          This blog will explain this method under the expectation maximization framework
+          that we introduced in the <a href="EM.html">previous post</a>.<em><small>- Posted on Oct 29, 2017</small></em></p>
+			</div>
+
+      <!-- content -->
+      <h2>1. Problem Setup </h2>
+      In PET, patients are injected compounds containing radioactive isotopes. Those radioactive compounds form an unknown emitter density inside the body of the patient. Detectors are placed around the patient to capture signals ( gamma-rays ) emitted by that emitter. The ultimate goal is to estimate the emitter density based on measurements from detectors. It can be rephrased as follows:
+      <ul>
+        <li> Unknown emitter density: $\lambda(x,y,z) \geq 0$ </li>
+        <li> Radiation emission occurred in Poisson distribution. </li>
+        <li> The total number of coincidences counted in the d'th detector: $n^*(d), d = {1, \dots, D}$ </li>
+        <li> Goal: estimate $\lambda(x,y,z)$ from $n^*=\{n^*(1),\dots,n^*(D)\}$</li>
+
+      </ul>
+
+      <h2>2. MLEM Algorithm </h2>
+      <h4>2.1 Statistical Model</h4>
+      We discretize the density $\lambda(x,y,z)$ into voxels $b = \{1, \dots, B\}$ such that in voxel $b$ we have $\lambda(b)$. We further use $n(b)$ to denote the unknown count inside box $b$. Because of the Poisson property, we have:
+      \begin{equation}
+        P(n(b)=k;\lambda) = e^{-\lambda(b)}\frac{\lambda(b)^k}{k!}
+      \end{equation}
+      \begin{equation}
+        \lambda(b) = En(b)
+      \end{equation}
+      We also suppose that the following conditional probability is known:
+      \begin{equation}
+        p(b,d) = P(\ detected\ in\ detector\ d\ |\ emitted\ in\ voxel\ b)
+      \end{equation}
+      Till now, we have finished setting up basic statistical model structure. Here are a few more discussions:
+      <ul>
+        <li>$n(b)$: unknown counts in voxel $b$</li>
+        <li>$n^*(d)$: measured counts in detector $d$</li>
+        <li>$n(b,d)$: unknown counts that are emitted by voxel $b$ and detected by detector $d$ </li>
+        <li>$\lambda(b) = En(b)$: unknown emitter density in voxel $b$</li>
+        <li>$\lambda^*(d) = En^*(d)$: mean measured counts in detector $d$</li>
+        <li>$\lambda(b,d) = En(b,d)$: mean unknown counts that emitted by voxel $b$ and detected by detector $d$ </li>
+      </ul>
+      \begin{eqnarray}
+      n(b,d) = n(b)p(b,d)\\
+      \lambda(b,d) = \lambda(b)p(b,d)\\
+      n^*(d) = \sum^B_{b=1}n(b,d)\\
+      \lambda^*(d)= \sum^B_{b=1}\lambda(b,d )
+      \end{eqnarray}
+      <h4>2.2 MLEM Algorithm</h4>
+      During this experiment, we can only observe $n^*$. There are many possible combinations of $n(b,d)$ inside the volume of interest that can finally lead to $n^*$. Let's define one possible collection of $n(b,d)$ that satisfies $n^*$ to be $a$:
+      \begin{equation}
+      a = \{n(b,d): \sum_{b=1}^Bn(b,d)=n^*(d)\}
+      \end{equation}
+      As discussed above, there are many possible choices of $n(b,d)$ that can lead to $n^*$. Thus, we have many $a$'s, and we index them as $a_1, a_2, \dots$. Define $A$ as the set that contains all possible radiation emission situations:
+      \begin{equation}
+      A = \{a_1, a_2, \dots\}
+      \end{equation}
+      Note that $A$ might contain a very large number of $a$'s. Then we have the following log-likelihood:
+      \begin{eqnarray}
+      logP(n^*;\lambda) = log[\sum_{a \in A} \prod_{b,d}e^{-\lambda(b,d)}\frac{\lambda(b,d)^{n(b,d)}}{n(b,d)!}]
+      \end{eqnarray}
+      Suppose we choose an arbitrary probability distribution over $A$ as $q(a), a \in A$, we have:
+      \begin{eqnarray}
+      &logP(n^*;\lambda)\\
+      &= log[\sum_{a \in A} q(a)\frac{ \prod_{b,d}e^{-\lambda(b,d)}\frac{\lambda(b,d)^{n(b,d)}}{n(b,d)!}}{q(a)}] \\
+      &=log E_A[\frac{ \prod_{b,d}e^{-\lambda(b,d)}\frac{\lambda(b,d)^{n(b,d)}}{n(b,d)!}}{q(a)}]\\
+      &\geq E_A[\sum_{b,d} log (e^{-\lambda(b,d)}\frac{\lambda(b,d)^{n(b,d)}}{n(b,d)!})-log\ q(a)]\\
+      &=\sum_{a \in A}[q(a)\sum_{b,d} log (e^{-\lambda(b,d)}\frac{\lambda(b,d)^{n(b,d)}}{n(b,d)!})-q(a)\ log\ q(a)]
+      \end{eqnarray}
+      We want to find the best $\lambda$ that maximize $logP(n^*;\lambda)$, thus we do not care about the second term in previous equation. We can write the log-likelihood as follows:
+      \begin{eqnarray}
+      &l(\lambda)= logP(n^*;\lambda) \\
+      &\approx \sum_{a \in A}[q(a)\sum_{b,d} log (e^{-\lambda(b,d)}\frac{\lambda(b,d)^{n(b,d)}}{n(b,d)!})]\\
+      &=\sum_{a \in A}[q(a)\sum_{b,d} log (e^{-\lambda(b)p(b,d)}\frac{\lambda(b)^{n(b,d)}p(b,d)^{n(b,d)}}{n(b,d)!})]
+      \end{eqnarray}
+      In order to find $\lambda$ that maximize previous equation, we will use gradient ascent. In each iteration, the gradient of $l(\lambda)$ at current $\lambda$ will be calculated, and the new $\lambda$ will be calculated based on current $\lambda$ and the gradient:
+      \begin{equation}
+      \lambda^{new}(b_0) = \lambda^{old}(b_0) + \lambda^{old}(b_0)) \frac{\partial l(\lambda)}{\partial \lambda^{old}(b_0)}
+      \end{equation}
+      The gradient of log-likelihood is calculated as:
+      \begin{eqnarray}
+      &\frac{\partial l(\lambda)}{\partial \lambda(b_0)}= -1 + \sum_{d=1}^D\frac{n^*(d)P(b_0, d)}{\sum_{b'=1}^B\lambda(b')p(b',d)}
+      \end{eqnarray}
+      And we have the final updating rule:
+      \begin{equation}
+      \label{updating-rule}
+      \lambda^{new}(b_0) = \lambda^{old}(b_0) \sum_{d=1}^D\frac{n^*(d)P(b_0, d)}{\sum_{b'=1}^B\lambda(b')p(b',d)}
+      \end{equation}
+      This updating rule is consistent with equation (2.13) from <a href="https://www.ncbi.nlm.nih.gov/pubmed/18238264">Shepp and Vardi in 1982</a>.
+    </div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<!-- mathjax plugin for math display -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" async
+src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+      <footer class="page-footer font-small blue">
+        <!-- Copyright -->
+        <div class="footer-copyright text-center py-3" style="background-color:#4285f4">
+          <font color='white'>© 2018 Copyright: <strong> Zheng Liu</strong> (updated Aug 2018)</font>
+        </div>
+      </footer>
+
+</body></html>

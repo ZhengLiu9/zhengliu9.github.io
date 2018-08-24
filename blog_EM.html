@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Zheng Liu, PhD candidate of UIUC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zheng">
+    <meta name="author" content="Zheng">
+	   <meta name="keywords" content="Zheng Liu, UIUC, data science, job seeking, radiation detection, nuclear engineering">
+    <!-- Le styles -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="materials/additional.css" rel="stylesheet">
+    <style>
+      body {padding-top: 50px; /* 60px to make the container go all the way to the bottom of the topbar */}
+    </style>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="index.html">Zheng's Homepage</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="index.html">About me</a>
+        <a class="nav-item nav-link" href="#">Projects</a>
+        <a class="nav-item nav-link active" href="blog_index.html">Blog</a>
+        <a class="nav-item nav-link" href="materials/Zheng_Resume_current.pdf" target="_blank">Resume</a>
+      </div>
+    </div>
+  </nav>
+
+
+    <div class="container">
+
+
+    <section id="Experiences">
+			<div class="page-header">
+				<h1>A Primer on Expectation Maximization</h1>
+        <p> by <a href="index.html">Zheng Liu</a></p>
+        <p class='lead'>An easy introduction of maximum likelihood estimation (MLE) and expectation maximization (EM).
+          In this blog, I will explain the basic structure of EM algorithm and also show how EM algorithm
+          actually maximizes the likelihood through iterations. <em><small>- Posted on Oct 05, 2017</small></em></p>
+			</div>
+
+      <!-- content -->
+      <h2> 1. Maximum Likelihood Estimation </h2>
+      Suppose we have a probability distribution $P(x;\theta)$, and $\theta$ is the parameter of this probability distribution. From this probability distribution we sample an observation $x_1$. The probability of obtaining $x_1$ from probability distribution $P(x;\theta)$ is $p(x_1; \theta)$. When we have $n$ independent observations $X = \{x_1, ..., x_n\}$, the probability of observing $X$ under probability distribution $P(x; \theta)$ is:
+      \begin{equation}
+      p(X; \theta) = \prod_{i=1}^{n} P(x_i; \theta)
+      \end{equation}
+      For a given dataset $X$, $p(X; \theta)$ is a function of $\theta$:
+      \begin{equation}
+      \label{eq-likelihood}
+      L(\theta) = p(X; \theta) = \prod_{i=1}^{n} P(x_i; \theta)
+      \end{equation}
+      We call this function the <b>likelihood function: $L(\theta)$</b>. The maximum likelihood estimation is a process of finding the best $\theta$ that maximize the value of likelihood function. This process can be described as following:
+      \begin{equation}
+      \label{eq-lmax}
+      \hat{\theta} = argmax_{\theta}\ L(\theta)=argmax_{\theta}\prod_{i=1}^{n} P(x_i; \theta)
+      \end{equation}
+      Usually, it is easier to process summations instead of products. Thus we would like to add a <i>log</i> in both sides of equation \eqref{eq-likelihood}. And we will give $log(L(\theta))$ a new name: <b>log-likelihood function</b>, and denote it by $l(\theta)$:
+      \begin{equation}
+      l(\theta) = log(L(\theta)) = \sum_{i=1}^{n} log(P(x_i; \theta))
+      \end{equation}
+      Because the <i>log</i> is a non-decreasing function, maximizing the likelihood function is equivalent to maximizing the log-likelihood function. Equation \eqref{eq-lmax} can be written as following:
+      \begin{equation}
+      \hat{\theta} = argmax_{\theta}\ l(\theta) = argmax_{\theta}\sum_{i=1}^{n} log(P(x_i; \theta))
+      \end{equation}
+      To find the optimized $\theta$, we can use gradient descent, coordinate descent, Newton's iteration, etc.
+      <p></p>
+      <h2>2. Expectation Maximization</h2>
+      <p></p>
+      <h4>2.1 Difficulties of MLE</h4>
+      <p>When we are able to observe all the random variables in a model, we can use MLE to find the optimized parameter as discussed in previous section. However, in some situations there are <b>hidden variables</b> in a model. We can not observe those variables, and the MLE method needs to be changed a little to incorporate those hidden variables. The expectation maximization (EM) is a popular method to solve the parameter estimation problem with hidden variables. EM can be understood as a variation of MLE method.</p>
+
+      We denote the probability distribution with hidden random variables as $P(x,z;\theta)$. $x$ is observable random variables, $z$ is hidden random variables, and $\theta$ is the parameter for this model. Assume we have one observation $x_1$. The probability of observing $x_1$ under this probability distribution is
+      \begin{equation}
+      p(x_1;\theta) = \sum_{z_1}P(x_1, z_1; \theta)
+      \end{equation}
+      Here $p(x;\theta)$ is the marginal distribution of x, thus we need to sum over all possible values of hidden random variable $z$. When we observed n independent observable random variables $X=\{x_1, ..., x_n\}$, we can obtain the likelihood function $L(\theta)$ as well as log-likelihood function $l(\theta)$:
+      \begin{equation}
+      L(\theta) = \prod_{i=1}^n p(x_i;\theta) = \prod_{i=1}^n \sum_{z_i}P(x_i, z_i ; \theta)
+      \end{equation}
+      \begin{equation}
+      \label{eq-hiddenll}
+      l(\theta) = \sum_{i=1}^n log(p(x_i;\theta)) = \sum_{i=1}^n log(\sum_{z_i}P(x_i, z_i; \theta))
+      \end{equation}
+      In this setup, the MLE method is to find the $\theta$ that maximize the log-likelihood \eqref{eq-hiddenll}. It can be written as following:
+      \begin{equation}
+      \label{eq-mleh}
+      \hat{\theta} = argmax_{\theta}\ l(\theta) = argmax_{\theta}\sum_{i=1}^n log(\sum_{z_i}P(x_i, z_i; \theta))
+      \end{equation}
+      <p>Here we can find that there is a summation in <i>log</i>. This makes equation \eqref{eq-mleh} very difficult to optimize. Thus the traditional MLE method is not feasible for this kind of problems. In order to solve this problem, we introduce the expectation maximization (EM) algorithm.</p>
+
+      <h4>2.2 Jensen's Inequality </h4>
+      In EM algorithm, we modify the log-likelihood through Jensen's inequality, and make the log-likelihood easier to solve. The general form of Jensen's Inequality is:
+      \begin{equation}
+      \phi(E[X]) \geq E[\phi(X)],\\ given\ \phi(X)\ is\ concave
+      \end{equation}
+      The equality holds if and only if $X$ is constant. In EM algorithm, we modify the log-likelihood as following:
+      \begin{eqnarray}
+      l(\theta)&=\sum_{i=1}^n log(\sum_{z_i}P(x_i, z_i; \theta))\\
+      &= \sum_{i=1}^n log(\sum_{z_i}q(z_i)\frac{P(x_i, z_i; \theta)}{q(z_i)})\\
+      &= \sum_{i=1}^n log(E_{q(z_i)}[\frac{P(x_i, z_i; \theta)}{q(z_i)}])\\
+      &\geq \sum_{i=1}^n E_{q(z_i)}[log(\frac{P(x_i, z_i; \theta)}{q(z_i)})]\\
+      &= \sum_{i=1}^n \sum_{z_i}q(z_i)log(\frac{P(x_i, z_i; \theta)}{q(z_i)})
+      \end{eqnarray}
+      <h4>2.3 Iterations and Q-function</h4>
+      This optimization problem is going to be solved by iterations, which means the log-likelihood will be maximized step by step. We use $t$ to denote steps, for example $t = 0,1,2,\dots$. Under this notation, we denote the estimated parameter $\theta$ at step $t$ to be $\theta^{(t)}$. The $q(z_i)$ is a user constructed probability mass function. Without loss of generality, we assume that at step $t$, the user constructs $q(z_i)$ based on the parameter $\theta^{(t)}$, which means $q(z_i)$ is also a function of $\theta^{(t)}$:
+      \begin{equation}
+      At\ step\ t:\ q(z_i) = q(z_i, \theta^{(t)})
+      \end{equation}
+      Bring $q(z_i, \theta^{(t)})$ back to previously modified log-likelihood function, we finally obtain the objective function of EM algorithm (and we call it Q-function: $Q(\theta, \theta^{(t)}))$:
+      \begin{equation}
+      Q(\theta, \theta^{(t)})= \sum_{i=1}^n \sum_{z_i}q(z_i, \theta^{(t)})log(P(x_i, z_i; \theta))
+      \end{equation}
+      Now, we have a new question:
+      <p style="text-indent: 40px"> <i>How should we construct $q(z_i)$ such that we can truly maximize $l(\theta)$ by maximizing $Q(\theta, \theta^{(t)})$ through iterations?</i></p>
+      Here we choose the $q(z_i, \theta^{(t)})$ to be:
+      \begin{equation}
+      q(z_i, \theta^{(t)}) = \frac{P(z_i, x_i ; \theta^{(t)})}{\sum_{z_i}P(z_i, x_i ; \theta^{(t)})} = P(z_i | x_i; \theta^{(t)})
+      \end{equation}
+      Later we will prove that under this choice of $q(z_i, \theta^{(t)})$, the log-likelihood $l(\theta)$ is non-decreasing in EM iterations. In other words, we keep on finding $\theta's$ such that make $l(\theta)$ larger and larger.
+      <h4>2.4 Final Form of EM Algorithm</h4>
+      Here is the final form of EM algorithm:
+      \begin{eqnarray}
+      \begin{aligned}
+      &t = 0\\
+      &Initialize\ \theta^{(0)}\\
+      &While\ \theta^{(t)}\ not\ converge:\\
+      &\qquad q(z_i, \theta^{(t)})= P(z_i | x_i; \theta^{(t)})\\
+      &\qquad Q(\theta, \theta^{(t)})= \sum_{i=1}^n \sum_{z_i}q(z_i, \theta^{(t)})log(P(x_i, z_i; \theta))\\
+      &\qquad \theta^{(t+1)} = \underset{\theta}{argmax}\ Q(\theta, \theta^{(t)})\\
+      &\qquad t = t+1
+      \end{aligned}
+      \end{eqnarray}
+      <h2>3. Converge of EM Algorithm</h2>
+      In this section, we will prove that in EM steps the $l(\theta)$ is non-decreasing.
+      \begin{eqnarray}
+
+      &l(\theta^{(t+1)})=\sum_{i=1}^n log(\sum_{z_i}P(x_i, z_i; \theta^{(t+1)}))\\
+      & \geq \sum_{i=1}^n \sum_{z_i}q(z_i)log(\frac{P(x_i, z_i; \theta^{(t+1)})}{q(z_i)})\\
+      &= \sum_{i=1}^n \sum_{z_i}q(z_i, \theta^{(t)})log(\frac{P(x_i, z_i; \theta^{(t+1)})}{q(z_i, \theta^{(t)})})\\
+      &\geq \sum_{i=1}^n \sum_{z_i}q(z_i, \theta^{(t)})log(\frac{P(x_i, z_i; \theta^{(t)})}{q(z_i, \theta^{(t)})})\\
+      &= \sum_{i=1}^n log(\sum_{z_i}q(z_i, \theta^{(t)})\frac{P(x_i, z_i; \theta^{(t)})}{q(z_i, \theta^{(t)})})\\
+      &=\sum_{i=1}^n log(\sum_{z_i}P(x_i, z_i; \theta^{(t)}))\\
+      &=l(\theta^{(t)})
+
+      \end{eqnarray}
+
+
+      Thus, in EM algorithm it is guaranteed that:
+      \begin{equation}
+      l(\theta^{(t+1)}) \geq l(\theta^{(t)})
+
+      \end{equation}
+
+
+
+
+
+    </div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<!-- mathjax plugin for math display -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" async
+src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+      <footer class="page-footer font-small blue">
+        <!-- Copyright -->
+        <div class="footer-copyright text-center py-3" style="background-color:#4285f4">
+          <font color='white'>© 2018 Copyright: <strong> Zheng Liu</strong> (updated Aug 2018)</font>
+        </div>
+      </footer>
+
+</body></html>
