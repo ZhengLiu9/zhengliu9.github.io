@@ -26,8 +26,8 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="index.html">About me</a>
-        <a class="nav-item nav-link" href="#">Projects</a>
-        <a class="nav-item nav-link active" href="#">Blog</a>
+        <a class="nav-item nav-link active" href="#">Projects</a>
+        <a class="nav-item nav-link" href="blog_index.html">Blog</a>
         <a class="nav-item nav-link" href="materials/Zheng_Resume_current.pdf" target="_blank">Resume</a>
       </div>
     </div>
@@ -39,33 +39,105 @@
 
     <section id="Experiences">
 			<div class="page-header">
-				<h2>Blog</h2>
+				<h2>Projects</h2>
 			</div>
 
+      <a class="anchor" id="rnn"></a>
 			<div class="row align-items-center">
-       <div class='col-4 text-center'><img src="materials/blog1.png" width="200px" class="img-fluid" alt="Responsive image"></div>
-       <div class='col-8'>
-         <h4><a href="blog_EM.html">A Primer on Expectation Maximization</a></h4>
-        <p>An easy introduction of maximum likelihood estimation (MLE) and expectation maximization (EM).
-          In this blog, I will explain the basic structure of EM algorithm and also show how EM algorithm
-          actually maximizes the likelihood through iterations. <em><small>- Oct 05, 2017</small></em></p>
+       <div class='col-6 text-center'><img src="materials/rnn.png" width="600px" class="img-fluid" alt="Responsive image"></div>
+       <div class='col-6'>
+         <h4><a href="https://doi.org/10.1016/j.radphyschem.2018.03.005" target="_blank">Prediction of weather induced background radiation fluctuation with recurrent neural networks.</a></h4>
+        <p>Background radiation estimation plays an important role in the anomalous
+          radiation detection. Accurately estimating temporal and spatial fluctuations
+          of background radiation helps to reduce the false alarm rate and improve the
+          estimation accuracy of anomalous source location. It has been long observed
+          that background radiation is positively correlated with precipitation due to
+          the scavenging effect of rain and snow. This paper presents the usage of
+          recurrent neural networks to predict the background radiation level based
+          on past weather and radiation data. Two datasets are prepared with
+          different noise levels. Experiment results show that recurrent neural
+          networks outperform the traditional moving average algorithm on the
+          high noise dataset; recurrent neural networks perform as well as the
+          moving average algorithm on the low noise dataset. <a href="https://doi.org/10.1016/j.radphyschem.2018.03.005" target="_blank">[paper]</a></p>
        </div>
       </div>
       <br>
 
+      <a class="anchor" id="fcn"></a>
       <div class="row align-items-center">
-       <div class='col-4 text-center'><img src="materials/blog2.png" width="200px" class="img-fluid" alt="Responsive image"></div>
-       <div class='col-8'>
-         <h4><a href="blog_PETEM.html">Expectation Maximization for Medical Imaging Reconstruction</a></h4>
-        <p>An introduction of MLEM (maximum likelihood expectation maximization)
-          algorithm for medical imaging reconstruction (emission tomography such as PET and SPECT). The MLEM algorithm for emmision image
-          reconstruction was originally developed by
-          <a href="https://www.ncbi.nlm.nih.gov/pubmed/18238264">Shepp and Vardi in 1982</a>.
-          This blog will explain this method under the expectation maximization framework
-          that we introduced in the <a href="EM.html">previous post</a>.<em><small>- Oct 29, 2017</small></em></p>
+       <div class='col-6 text-center'><img src="materials/fcn.png" width="600px" class="img-fluid" alt="Responsive image"></div>
+       <div class='col-6'>
+         <h4><a href="https://doi.org/10.1117/12.2293715" target="_blank">Automated location detection of injection site for preclinical stereotactic neurosurgery through fully convolutional networks.</a></h4>
+        <p>Currently, injection sites of probes, cannula, and optic fibers in
+          stereotactic neurosurgery are typically located manually. This step
+          involves location estimations based on human experiences and thus
+          introduces errors. In order to reduce location error and improve
+          repeatability of experiments and treatments, we investigate an
+          automated method to locate injection sites. This paper proposes a
+          locating framework, which integrates a regional convolutional network
+          and a fully convolutional network, to locate specific anatomical
+          points on skulls of rodents. Experiment results show that the proposed
+          locating framework is capable to identify and locate Bregma and Lambda
+          in rodent skull images with mean errors less than 500 um. This
+          method is robust to different lighting conditions and mouse orientations,
+          and has the potential to simplify the procedure of locating injection sites.
+        <a href="https://doi.org/10.1117/12.2293715" target="_blank">[paper]</a></p>
        </div>
       </div>
       <br>
+
+      <a class="anchor" id="msn"></a>
+      <div class="row align-items-center">
+       <div class='col-6 text-center'><img src="materials/msn.png" width="600px" class="img-fluid" alt="Responsive image"></div>
+       <div class='col-6'>
+         <h4><a href="#msn">Spatial-temporal modeling of background radiation using mobile sensor networks</a></h4>
+        <p>Modeling of background radiation for the urban environment plays an
+          important role in homeland security. However, background radiation is
+          difficult to assess due to its spatial-temporal fluctuations caused
+          by the variation in soil composition, building materials, and weather
+          patterns etc. To address the challenge of background radiation
+          modeling, we developed a mobile sensor network to continuously monitor
+          the background radiation; we also proposed a maximum likelihood estimation
+          algorithm to decouple and estimate the background's spatial distribution
+          and temporal fluctuation. Experimental results demonstrated how this
+          background radiation monitoring system accurately recognized high
+          background regions in the experimental area, and successfully captured
+          temporal fluctuation trends of background radiation during rains. Our
+          system provides an efficient solution to model the temporal fluctuation
+          and spatial distribution of background radiation. [paper under review]</p>
+       </div>
+      </div>
+      <br>
+
+      <a class="anchor" id="rl"></a>
+      <div class="row align-items-center">
+       <div class='col-6 text-center'><img src="materials/rl.png" width="600px" class="img-fluid" alt="Responsive image"></div>
+       <div class='col-6'>
+         <h4><a href="#rl">Reinforcement learning for Radiation Source Detection</a></h4>
+        <p>Anomalous radiation source detection in urban environment is challenging
+          due to the complex nature of background radiation. When a suspicious area
+          is determined, a radiation survey is usually carried out to search for
+          anomalous radiation sources. To deliver a comprehensive and efficient
+          survey, different survey approaches have been studied such as manually
+          scanning the area by human or human operated robots, as well as
+          automatically scanning the area with robots under the navigation of
+          pre-defined survey paths. However, these two approaches either require
+          human efforts or are not efficient and flexible enough to adjust
+          survey paths based on recent measurements. Reinforcement learning,
+          which studies the problem of how agents ought to take the optimized
+          action so that a goal can be achieved efficiently, provides an
+          alternative data-driven solution to conduct radiation detection tasks
+          with no human intervention. In this paper, we apply reinforcement
+          learning to navigate an automated agent searching for radiation
+          sources. A simulated radiation environment is constructed, and
+          Q-learning approaches are applied. Preliminary results show that
+          Q-learning is able to navigate the agent to search for sources
+          efficiently. [paper under review]</p>
+       </div>
+      </div>
+      <br>
+
+
 
 		</section>
     <br>
