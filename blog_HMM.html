@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Zheng Liu, PhD candidate of UIUC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zheng">
+    <meta name="author" content="Zheng">
+	   <meta name="keywords" content="Zheng Liu, UIUC, data science, job seeking, radiation detection, nuclear engineering">
+    <!-- Le styles -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="materials/additional.css" rel="stylesheet">
+    <style>
+      body {padding-top: 50px; /* 60px to make the container go all the way to the bottom of the topbar */}
+    </style>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="index.html">Zheng's Homepage</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="index.html">About me</a>
+        <a class="nav-item nav-link" href="#">Projects</a>
+        <a class="nav-item nav-link active" href="blog_index.html">Blog</a>
+        <a class="nav-item nav-link" href="materials/Zheng_Resume_current.pdf" target="_blank">Resume</a>
+      </div>
+    </div>
+  </nav>
+
+
+    <div class="container">
+
+
+    <section id="Experiences">
+			<div class="page-header">
+				<h1>Modeling Background Radiation with Hidden Markov Model</h1>
+        <p> by <a href="index.html">Zheng Liu</a></p>
+        <p class='lead'>This project demonstrates the usage of Hidden Markov Model (HMM) in radiation modeling. Real radiation measureemnts are acquired, and a Poisson HMM is used to model the fluctuation of radiation mean values. This is part of the course project from <em><a href="https://faculty.math.illinois.edu/~kkirkpat/564fall2016.html" target='_blank'>STAT 555 - Applied Stochastic Processes</em></a><em><small> - Posted on Dec 04, 2016</small></em></p>
+			</div>
+
+      <h2>Introduction</h2>
+      <p>This project studies the problem of estimating environment gamma-ray radiation with <a href="https://en.wikipedia.org/wiki/Hidden_Markov_model" target="_blank">Hidden Markov Model (HMM)</a>. Environment radiation major comes from natural radioactive materials in the environment, such as potassium-40, thorium-232 and uranium-238 in the soil and radon-226 in the air. Studies have shown that the concentration of radioactive materials in the environment can be affected by precipitation, and the background radiation thus will fluctuate as weather condition changes. This project aims at modeling the fluctuation behavior of background radiation based on radiation measurements using HMM. Because decay events from radioactive materials follow Poisson distribution, the Poisson Hidden Markov Model is used.
+      </p>
+
+      <h2>Experiment Design</h2>
+      <p>
+      In this project, both radiation measurements and precipitation measurements were required. We deployed a small weather station together with a scintillator gamma-ray detector to collect radiation and precipitation data for a period of seven days. The radiation measurements recorded the gamma-ray count rate in every second, and the weather station recorded the precipitation information in every 10 minutes.</p>
+
+      <div class="text-center">
+        <img src="materials/background1.png" width="750px" class="img-fluid" alt="Responsive image">
+        <i><p id="vis">Figure 1. Recorded background radiation and precipitation measurements between 2016-11-27 20:00 and 2016-11-29 2:00</p></i>
+      </div>
+
+      <p>Figure 1 shows that the background radiation level changed from hours to hours. However, in the time interval of ten minutes the background radiation level could be considered as constant. For each ten minutes, the average count rate was calculated and treated as the ground truth radiation level for that time interval. According to the Poisson distribution, the more measurements are acquired, the better estimation can be calculated. For the ground truth radiation level, each mean value was estimated by 600 measurements (1 seconds * 600 = 10 minutes). The question is whether this radiation ground truth value can be estimated accurately with fewer measurements. In this project, we used a Poisson Hidden Markov Model to approximate this ground truth radiation level with much less measurements in each time interval.</p>
+     </p>
+
+     <h2>Poisson Hidden Markov Model</h2>
+     <p> In our project, the background radiation was modeled by Poisson Hidden Markov Model (PHMM). The background radiation levels were treated as hidden states, which formed an unobservable discrete time Markov Chain. The step size for time was 10 minutes. Each hidden state corresponded to a Poisson distribution which generated the radiation measurements within the hidden state's time interval. This project was implemented by ghmm Python package, which doesn't support using Poisson distribution for emission probabilities. Gaussian distributions were used instead to approximate the Poisson distributions .
+     </p>
+
+     <div class="text-center">
+       <img src="materials/Presentation1.png" width="600px" class="img-fluid" alt="Responsive image">
+       <i><p id="vis">Figure 2. Illustration of Hidden Markov Model</p></i>
+     </div>
+
+     <h4>Training:</h4>
+     <p>There were in total 180 time-intervals in the dataset. Each time interval contained 600 measurements. Each measurement lasted for one second. For each time-interval, a measurement was randomly selected to form the training dataset, which had 180 one-second measurements in total. This training dataset was used to obtain the transition probability matrix and emission probability functions of the hidden Markov model, through the Baum-Welch algorithm implemented by ghmm package in python.</p>
+     <h4>Prediction:</h4>
+     <p>The same training dataset was used to predict the hidden state (radiation level) for 180 time-intervals based on the transition probability matrix and emission probability functions obtained in the training step, through the Viterbi algorithm implemented by ghmm package in python.  </p>
+
+     <h2>Results discussion</h2>
+     <p>In the following three figures, HMM predictions (green line) were compared with the reference value of background radiation level (red line). All of the three HMM (3, 5, and 10 hidden states) captured the overall trend of background radiation. However, the HMM with 3 hidden states had too few hidden states to capture details of the change of background radiation. On the contrary, the HMM with 10 hidden states had too many hidden states that its prediction was too noisy and over-fitting to the measurements. The HMM with 5 hidden states provided the highest quality of prediction, and matched the reference level the best.  </p>
+
+     	<div class="text-center">
+        <img src="materials/Presentation4.png" width="600px" class="img-fluid" alt="Responsive image">
+        <i><p id="vis">Figure 3. Prediction from 3 hidden state HMM.</p></i>
+      </div>
+
+     	<div class="text-center">
+        <img src="materials/Presentation2.png" width="600px" class="img-fluid" alt="Responsive image">
+        <i><p id="vis">Figure 4. Prediction from 5 hidden state HMM.</p></i>
+      </div>
+
+     	<div class="text-center">
+        <img src="materials/Presentation3.png" width="600px" class="img-fluid" alt="Responsive image">
+        <i><p id="vis">Figure 5. Prediction from 10 hidden state HMM.</p></i>
+      </div>
+
+      <h2>Reference</h2>
+      <p>[1]. Shahbazi-Gahrouei D, Gholami M, Setayandeh S. A review on natural background radiation. Advanced Biomedical Research. 2013;2:65. doi:10.4103/2277-9175.115821.<br>
+      This paper explained the basic concepts and knowledge about background radiation, and discusseed different sources of background radiation in our daily life. This paper introduced my project’s background knowledge of radiation.</p>
+      <p>[2]. N. Salikhov and O. Kryakunova, “An increase of the soft gamma-ray background by precipitations,” International Cosmic Ray Conference, vol. 11, p. 367, 2011.<br>
+      This paper discussed the correlation between precipitation and soft gamma-ray background radiation based on an experiment in Tien-Shan mountains. Their results showed that the environmental gamma-radiation background increased during precipitation.</p>
+
+      <p>[3]. "Markov Chains" by J. R. Norris
+      First three chapter, especially section 2.4: Poisson Process.<br>This section describes the definition and properties of Poisson Process, which will be used to model the background radiation events.</p>
+
+      <p>[4]. Scott, Steven L. "Bayesian methods for hidden Markov models." Journal of the American Statistical Association (2011).<br>
+      Demonstrated how to use recursive algorithms to simulate the parameters of Hidden Markov Model based on observed data. </p>
+
+      <p>[5]. GHMM Library homepage: http://ghmm.sourceforge.net/ <br> This is the hidden Markov model package implemented in this project</p>
+
+
+
+
+        </div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<!-- mathjax plugin for math display -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+      <footer class="page-footer font-small blue">
+        <!-- Copyright -->
+        <div class="footer-copyright text-center py-3" style="background-color:#4285f4">
+          <font color='white'>© 2018 Copyright: <strong> Zheng Liu</strong> (updated Aug 2018)</font>
+        </div>
+      </footer>
+
+</body></html>
